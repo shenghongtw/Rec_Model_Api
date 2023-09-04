@@ -1,5 +1,4 @@
-from metric.rating import 
-from metric.ranking import
+
 class Recommeder:
     def __init__(self, train_set, test_set):
         self.train_set = train_set
@@ -24,11 +23,10 @@ class Recommeder:
         pass
     
     def check_rating_boundary(self,prediction):
-        
+        pass
         
     def eval_rating(self):
-        
-
+        pass
 
     def eval_ranking(self):
         pass
