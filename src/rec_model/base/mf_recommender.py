@@ -1,7 +1,10 @@
 import numpy as np
-from random import shuffle
 import tensorflow.compat.v1 as tf
+
+from util import find_topk_items
 from base.recommender import Recommeder
+from metric.rating import rating_measure
+from metric.ranking import ranking_measure
 
 class MfRecommender(Recommeder):
     def __init__(self, train_set, test_set,
@@ -43,7 +46,34 @@ class MfRecommender(Recommeder):
             return self.data.globalMean
     
     def predict_score(self, u):
-        if self.data.containsUser(u):
+        if self.data.contains_user(u):
             return self.P[self.data.user[u]].dot(self.Q.T)
         else:
             return np.array([self.data.globalMean] * self.data.num_item)
+        
+    def rating_performance(self):
+        ground_truth = []
+        prediction_list = []
+        for data in self.data.testData:
+            user, item, rating = data
+            # predict
+            prediction = self.predict_rate(user, item)
+            pred = self.check_rating_boundary(prediction)
+            ground_truth.append(rating)
+            prediction_list.append(pred)
+        self.performance = rating_measure.rmse(prediction_list, ground_truth)
+        return self.performance
+
+    def ranking_performance(self, topk):
+        rec_list = {}
+        for user in self.data.testSet_u:
+            score_list = self.predict_score(user)
+            topk_item_ids = find_topk_items(topk, score_list)
+            rec_list[user] = topk_item_ids
+        hits = ranking_measure.hits(self.data.testSet_u, rec_list)
+        precision = ranking_measure.precision(hits, topk)
+        recall = ranking_measure.recall(hits, data)
+        self.performance = (precision, recall)
+        return self.performance
+        
+        
