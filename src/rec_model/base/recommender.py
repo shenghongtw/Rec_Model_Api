@@ -1,9 +1,10 @@
+from data.data_set import DataSet
 from metric.rating import rating_measure
 from metric.ranking import ranking_measure
 class Recommeder:
     def __init__(self, train_set, test_set):
-        self.train_set = train_set
-        self.test_set = test_set
+        self.data = DataSet(train_set, test_set)
+        self.performance = []
 
     def init_model(self):
         pass
@@ -28,8 +29,8 @@ class Recommeder:
         else:
             return round(prediction,3)
         
-    def eval_rating(self):
+    def rating_performance(self):
         pass
 
-    def eval_ranking(self):
+    def ranking_performance(self):
         pass
