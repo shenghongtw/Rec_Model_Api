@@ -43,8 +43,8 @@ class BPR(Model):
         neg_scores = tf.reduce_sum(tf.multiply(tf.expand_dims(user_emb, axis=1), neg_item_emb), axis=-1)  # (None, neg_num)
         # add loss
         self.add_loss(bpr_loss(pos_scores, neg_scores)) # regularization loss是加在embedding嗎?
-        # logits = tf.concat([pos_scores, neg_scores], axis=-1)
-        # return logits
+        logits = tf.concat([pos_scores, neg_scores], axis=-1)
+        return logits
     
     def predict_score(self, user_idx, item_idx):
         score = tf.reduce_sum(tf.multiply(self.user_embedding(user_idx), self.item_embedding(item_idx)), axis=-1)
