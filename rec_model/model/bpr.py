@@ -54,7 +54,6 @@ class BPR(Model):
         scores = self.predict_score(user_idx, items_idx)
         _, indices = tf.math.top_k(scores, k=k)
         return indices
-        
     
     def get_user_vector(self, inputs):
         if len(inputs) < 2 and inputs.get('user') is not None:
