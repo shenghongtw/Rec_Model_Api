@@ -27,7 +27,7 @@ def main():
     val_path = "rec_model/test/data/ml-1m/ml_val.txt"
     test_path = "rec_model/test/data/ml-1m/ml_test.txt"
     meta_path = "rec_model/test/data/ml-1m/ml_meta.txt"
-    model_save_path = "save_model/bpr/2"
+    model_save_path = "save_model/bpr/1"
 
     if os.path.exists(train_path):
         train_path, val_path, test_path, meta_path = train_path, val_path, test_path, meta_path
