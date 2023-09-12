@@ -5,6 +5,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
 from time import time
+import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 
 from rec_model.model.bpr import BPR
@@ -26,6 +27,7 @@ def main():
     val_path = "rec_model/test/data/ml-1m/ml_val.txt"
     test_path = "rec_model/test/data/ml-1m/ml_test.txt"
     meta_path = "rec_model/test/data/ml-1m/ml_meta.txt"
+    model_save_path = "save_model/bpr/2"
 
     if os.path.exists(train_path):
         train_path, val_path, test_path, meta_path = train_path, val_path, test_path, meta_path
@@ -61,6 +63,7 @@ def main():
         eval_dict = eval_pos_neg(model, test_data, ['hr', 'mrr', 'ndcg'], k, batch_size)
         print(f'Iteration{epoch}, Fit [{t2 - t1}], Evaluate [{time() - t2}]: HR = {eval_dict["hr"]}, MRR = {eval_dict["mrr"]}, NDCG = {eval_dict["ndcg"]}')
         # TODO 依據performance來儲存模型
-    model.save('../save_model/bpr')
+    tf.saved_model.save(model, model_save_path)
+
 if __name__ == '__main__':
     main()
