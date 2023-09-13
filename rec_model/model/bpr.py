@@ -34,7 +34,6 @@ class BPR(Model):
         neg_item_emb = self.item_embedding(inputs['neg_item'])  # (None, neg_num, embed_dim)
         # norm
         if self.use_l2norm:
-            
             pos_item_emb = tf.math.l2_normalize(pos_item_emb, axis=-1)
             neg_item_emb = tf.math.l2_normalize(neg_item_emb, axis=-1)
             user_emb = tf.math.l2_normalize(user_emb, axis=-1)
@@ -46,14 +45,16 @@ class BPR(Model):
         logits = tf.concat([pos_scores, neg_scores], axis=-1)
         return logits
     
-    def predict_score(self, user_idx, item_idx):
-        score = tf.reduce_sum(tf.multiply(self.user_embedding(user_idx), self.item_embedding(item_idx)), axis=-1)
-        return score
-
-    def recommend_top_k(self, user_idx, items_idx, k=10):
-        scores = self.predict_score(user_idx, items_idx)
-        _, indices = tf.math.top_k(scores, k=k)
-        return indices
+    # TODO: 覆蓋keras的predict方法，並用它來evaluete
+    def predict_score(self, user_idx, items_idx):
+        user_idx = tf.convert_to_tensor(user_idx, dtype=tf.int32)
+        items_idx = tf.convert_to_tensor(items_idx, dtype=tf.int32)
+        if tf.size(user_idx) == 1:
+            score = tf.reduce_sum(tf.multiply(self.user_embedding(user_idx), self.item_embedding(items_idx)), axis=-1)
+            return score.numpy()
+        if tf.size(user_idx) > 1:
+            raise ValueError('user_idx length > 1 is not supported.')
+        raise ValueError('user_idx length = 0 is not supported.')
     
     def get_user_vector(self, inputs):
         if len(inputs) < 2 and inputs.get('user') is not None:
